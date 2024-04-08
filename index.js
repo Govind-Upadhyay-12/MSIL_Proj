@@ -14,6 +14,9 @@ app.use(bodyParser.json());
 app.use(logger("dev"));
 
 app.use(require("./routes/index.js"));
+app.get('/',(req,res)=>{
+  console.log("server is ")
+})
 
 app.listen(8080, () => {
   console.log(`Server is running on port ${8080}`);
