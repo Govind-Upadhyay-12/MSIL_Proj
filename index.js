@@ -15,7 +15,7 @@ app.use(logger("dev"));
 
 app.use(require("./routes/index.js"));
 app.get('/',(req,res)=>{
-  console.log("server is ")
+  res.send("server is running")
 })
 
 app.listen(8080, () => {
