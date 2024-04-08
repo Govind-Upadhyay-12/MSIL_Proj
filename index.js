@@ -14,7 +14,7 @@ app.use(bodyParser.json());
 app.use(logger("dev"));
 
 app.get('/',(req,res)=>{
-  res.send("server is running")
+  res.send("server is running on Aws")
 })
 app.use(require("./routes/index.js"));
 
