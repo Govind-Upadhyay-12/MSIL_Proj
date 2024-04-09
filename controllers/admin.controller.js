@@ -52,7 +52,7 @@ module.exports.addCourse = async (req, res) => {
  
 module.exports.assignCourse = async (req, res) => {
   const { userEmail, courseName } = req.body;
-  console.log(userEmail, courseName);
+   console.log(userEmail, courseName);
   try {
     const isCourseExist = await admin.findCourse({title:courseName}); // Corrected property name to 'title'
     if (!isCourseExist) {

@@ -32,6 +32,7 @@ module.exports.login = async (req, res) => {
 
 module.exports.getAllCourses = async(req, res) => {
   const {id}=req.params;
+  console.log(id);
  const number_id=Number(id);
   try {
     const existingUser = await prisma.user.findFirst({
@@ -39,6 +40,7 @@ module.exports.getAllCourses = async(req, res) => {
         id:number_id
       }
     })
+    console.log(existingUser)
    
     if (!existingUser) {
       return res.status(404).json({ message: "User not found" });
@@ -54,3 +56,27 @@ module.exports.getAllCourses = async(req, res) => {
     
   }
 }
+module.exports.GetParticularCourse=async(req,res)=>{
+  const {id}=req.params;
+  const number_id=Number(id);
+  try {
+    const exist_course=await prisma.course.findFirst({
+      where:{
+        id:number_id
+      }
+    })
+    console.log(exist_course);
+    if(!exist_course){
+      return res.status(404).json({ message: "Course not available" });
+    }
+    return res.status(200).json({
+      file:exist_course
+    })
+    
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({message:error});
+    
+  }
+}
+
