@@ -11,12 +11,6 @@ module.exports.login = async (req, res) => {
     console.log(req.body);
     if (!email || !password)
       return res.status(400).json({ msg: "Please enter all fields" });
-    // const existingUser = await user.findOne({ where:{
-    //   email:email
-    // },{
-      
-    // }
-    // });
     const existingUser=await prisma.user.findFirst({where:{
       email:email
     },include:{
@@ -114,4 +108,42 @@ module.exports.GetUser=async(req,res)=>{
     
   }
 }
+
+module.exports.SearchCourse = async (req, res) => {
+  const { search_course } = req.body;
+  const {id}=req.params;
+  const id_user=Number(id);
+  try {
+    const User_find = await prisma.user.findFirst({
+      where: {
+        id: id_user
+      },
+      include: {
+        courses: true
+      }
+    });
+    const allCourses = User_find.courses;
+    console.log(allCourses);
+    const searchPattern = search_course.replace(/\s+/g, ''); 
+    const regexPattern = searchPattern.split('').join('.*'); 
+    const regex = new RegExp(regexPattern, 'i'); 
+    const matchingCourses = allCourses.filter(course => {
+      const courseTitleWithoutSpaces = course.title.replace(/\s+/g, ''); 
+     
+      return regex.test(courseTitleWithoutSpaces) || courseTitleWithoutSpaces.includes(searchPattern);
+    });
+    console.log(matchingCourses)
+
+    if(matchingCourses.length>0){
+      return res.status(200).json({data:matchingCourses});
+    }
+    else{
+      console.log("aara h");
+      return res.status(404).send({message:"no course"}) ;
+    }
+    } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: error });
+  }
+};
 
