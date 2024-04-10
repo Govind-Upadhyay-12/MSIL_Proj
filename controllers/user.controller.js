@@ -11,7 +11,20 @@ module.exports.login = async (req, res) => {
     console.log(req.body);
     if (!email || !password)
       return res.status(400).json({ msg: "Please enter all fields" });
-    const existingUser = await user.findOne({ email });
+    // const existingUser = await user.findOne({ where:{
+    //   email:email
+    // },{
+      
+    // }
+    // });
+    const existingUser=await prisma.user.findFirst({where:{
+      email:email
+    },include:{
+      Adds:true,
+      courses:true
+
+    }})
+    console.log(existingUser);
     if (!existingUser) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -23,7 +36,7 @@ module.exports.login = async (req, res) => {
       return res.status(401).json({ message: "Incorrect password" });
     }
     const token = await generateToken(existingUser._id);
-    return res.status(200).json({ token, userId: existingUser._id });
+    return res.status(200).json({ token, userId: existingUser._id ,user_details:existingUser});
   } catch (error) {
     console.error("Error in login:", error);
     return res.status(500).json({ message: "Internal server error" });
@@ -90,7 +103,7 @@ module.exports.GetUser=async(req,res)=>{
       
       },
       include:{
-        Adds:true,
+        Adds:true
       }
     })
     return res.status(200).json({data:user_find});
