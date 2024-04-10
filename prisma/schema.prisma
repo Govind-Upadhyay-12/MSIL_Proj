@@ -19,6 +19,7 @@ model User {
   name       String
   password   String
   courses    Course[]
+  Adds       Adds[]
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
@@ -30,6 +31,13 @@ model Course {
   content   String
   user      User?   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id   Int?
+}
+model Adds{
+ id        Int    @id @default(autoincrement())
+ image     String
+ user      User? @relation(fields: [user_id],references: [id],onDelete: Cascade)
+ user_id   Int
+
 }
 
 // npx prisma migrate dev --name create_user_model

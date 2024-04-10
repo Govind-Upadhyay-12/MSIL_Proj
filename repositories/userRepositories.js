@@ -61,6 +61,22 @@ module.exports = {
           throw new Error("Failed to find course");
         }
       },
+      createAdd:async(file)=>{
+      try {
+        const users = await prisma.user.findMany();
+          for(const user of users){
+          const create_adds=await  prisma.adds.create({
+            data:{
+               image:file.path,
+               user:{connect:{id:user.id}}
+            }
+          })
+        }
+        } catch (error) {
+         console.log(error);
+     }
+
+      },
     addCourse: async (data) => {
       const { userId, courseId } = data;
       console.log(`userId and courseId are: ${userId} ${courseId}`);

@@ -70,5 +70,16 @@ module.exports.assignCourse = async (req, res) => {
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+module.exports.Addadds=async(req,res)=>{
+  console.log(req.file); 
+  try {
+    const createAdd=await admin.createAdd(req.file);
+    return res.status(200).send({message:"Add_created_successfully_to all users"});
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({message:error});
+    
+  }
 
+}
  

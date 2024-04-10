@@ -79,4 +79,26 @@ module.exports.GetParticularCourse=async(req,res)=>{
     
   }
 }
+module.exports.GetUser=async(req,res)=>{
+  const {id}=req.params;
+  const number_id=Number(id);
+  
+  try {
+    const user_find=await prisma.user.findFirst({
+      where:{
+        id:number_id
+      
+      },
+      include:{
+        Adds:true,
+      }
+    })
+    return res.status(200).json({data:user_find});
+    
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({message:error});
+    
+  }
+}
 
