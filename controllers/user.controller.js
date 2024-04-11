@@ -3,6 +3,7 @@ const { ValidPassword, generateToken } = require("../helper/helper");
 const { sendResponse } = require("../lib/responseManagement");
 const { user } = require("../repositories/userRepositories");
 const httpStatus = require("http-status-codes").StatusCodes;
+const nodemailer = require('nodemailer');
 
 
 module.exports.login = async (req, res) => {
@@ -145,5 +146,47 @@ module.exports.SearchCourse = async (req, res) => {
     console.error(error);
     return res.status(500).json({ message: error });
   }
+};
+
+
+module.exports.sendMail = async (req, res) => {
+  const { fromMail, toMail, content } = req.body;
+  const {file}=req;
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'govindupadhyay85273@gmail.com',
+      pass: 'ulxt ahni skgw xukc' 
+    },
+    tls: {
+      rejectUnauthorized: false
+    } 
+  });
+ const text = `    
+    ${content}`
+
+  const mailOptions = {
+    from: fromMail,
+    to: toMail,
+    subject: 'Request registered',
+    text: text,
+    attachments: [
+      {
+        filename: file.originalname,
+        path: file.path,
+      },
+
+    ]
+  };
+
+  transporter.sendMail(mailOptions, function(error, info) {
+    if (error) {
+      console.log(error);
+      res.status(500).json({ msg: 'Error sending email' });
+    } else {
+      console.log(`Email sent: ${info.response}`);
+      res.status(200).send('Email sent successfully');
+    }
+  });
 };
 
