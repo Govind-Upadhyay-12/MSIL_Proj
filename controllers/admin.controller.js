@@ -1,45 +1,10 @@
-// const {admin}=require("../repositories/userRepositories")
-// module.exports = addCourse = async(req, res) =>{
-//       console.log(req.body);
-//      console.log("ye h req.body",req.file.filename)
-//   try {
-//     const video=await admin.createCourse(req.body,req.file)
-//     return res.status(200).send({message:"video uploaded"})
-    
-//    } catch (error) {
-//     console.log(error);
-//     return res.status(500).json({message:error})
 
-    
-//    }
-// }
-
-// module.exports = assignCourse = async(req, res) => {
-//   const {userEmail, courseName} = req.body;
-//   try {
-//     const isCourseExist = await admin.findCourse({name: courseName});
-//     if(!isCourseExist) {
-//       return res.status(400).json({message:"no course assign"});
-//     }
-//     const isUserExist = await user.findOne({email: userEmail});
-//     if(!isUserExist) {
-//       return res.status(404).json({msg: "Uesr not found"});
-//     }
-//     await admin.addCourse({user: isUserExist.id, courseId: isCourseExist.id});
-//     return res.status(200).json({msg: "Course added successfully"});
-
-//   } catch (error) {
-//     console.log(error);
-//     return res.status(500).json({msg: "Internal Server Error"});
-//   }
-// }
-
-
+const { prisma } = require("../DB/db.config");
 const { admin } = require("../repositories/userRepositories");
 const { user } = require("../repositories/userRepositories"); // Importing user repository
 
 module.exports.addCourse = async (req, res) => {
-  console.log(req.body);
+
   console.log("ye h req.body", req.file.filename); //YAHAN SE VODEP
   try {
     const video = await admin.createCourse(req.body, req.file);
@@ -79,6 +44,19 @@ module.exports.Addadds=async(req,res)=>{
     console.log(error);
     return res.status(500).send({message:error});
  }
+}
+module.exports.GettingAdds=async(req,res)=>{
+  try {
+    const All_Adds=await prisma.adds.findMany();
+    console.log(All_Adds)
+    if(!All_Adds){
+      return res.status(404).send({message:"No Adds"})
+    }
+    return res.status(200).json({ads:All_Adds})
+  } catch (error) {
+    console.log(error)
+    return res.status(500).send({message:error})
+  }
 }
 
  

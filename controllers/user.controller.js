@@ -5,33 +5,10 @@ const { user } = require("../repositories/userRepositories");
 const httpStatus = require("http-status-codes").StatusCodes;
 const nodemailer = require('nodemailer');
 
-
 module.exports.login = async (req, res) => {
+  const user_data=req.user;
   try {
-    const { email, password } = req.body;
-    console.log(req.body);
-    if (!email || !password)
-      return res.status(400).json({ msg: "Please enter all fields" });
-    const existingUser=await prisma.user.findFirst({where:{
-      email:email
-    },include:{
-      Adds:true,
-      courses:true
-
-    }})
-    console.log(existingUser);
-    if (!existingUser) {
-      return res.status(404).json({ message: "User not found" });
-    }
-    const isValidPassword = await ValidPassword(
-      password,
-      existingUser.password
-    );
-    if (!isValidPassword) {
-      return res.status(401).json({ message: "Incorrect password" });
-    }
-    const token = await generateToken(existingUser._id);
-    return res.status(200).json({ token, userId: existingUser._id ,user_details:existingUser});
+    return res.status(200).json({ data:user_data});
   } catch (error) {
     console.error("Error in login:", error);
     return res.status(500).json({ message: "Internal server error" });
@@ -39,7 +16,7 @@ module.exports.login = async (req, res) => {
 };
 
 module.exports.getAllCourses = async(req, res) => {
-  const {id}=req.params;
+  const {id}=req.user;
   console.log(id);
  const number_id=Number(id);
   try {
@@ -88,7 +65,7 @@ module.exports.GetParticularCourse=async(req,res)=>{
   }
 }
 module.exports.GetUser=async(req,res)=>{
-  const {id}=req.params;
+  const {id}=req.user;
   const number_id=Number(id);
   
   try {
@@ -97,9 +74,6 @@ module.exports.GetUser=async(req,res)=>{
         id:number_id
       
       },
-      include:{
-        Adds:true
-      }
     })
     return res.status(200).json({data:user_find});
     
@@ -112,7 +86,7 @@ module.exports.GetUser=async(req,res)=>{
 
 module.exports.SearchCourse = async (req, res) => {
   const { search_course } = req.body;
-  const {id}=req.params;
+  const {id}=req.user;
   const id_user=Number(id);
   try {
     const User_find = await prisma.user.findFirst({
