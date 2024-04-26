@@ -3,164 +3,159 @@ const { ValidPassword, generateToken } = require("../helper/helper");
 const { sendResponse } = require("../lib/responseManagement");
 const { user } = require("../repositories/userRepositories");
 const httpStatus = require("http-status-codes").StatusCodes;
-const nodemailer = require('nodemailer');
+const nodemailer = require("nodemailer");
 
 module.exports.login = async (req, res) => {
-  const user_data=req.user;
+  const user_data = req.user;
   try {
-    return res.status(200).json({ data:user_data});
+    return res.status(200).json({ data: user_data });
   } catch (error) {
     console.error("Error in login:", error);
     return res.status(500).json({ message: "Internal server error" });
   }
 };
 
-module.exports.getAllCourses = async(req, res) => {
-  const {id}=req.user;
+module.exports.getAllCourses = async (req, res) => {
+  const { id } = req.user;
   console.log(id);
- const number_id=Number(id);
+  const number_id = Number(id);
   try {
     const existingUser = await prisma.user.findFirst({
-      where:{
-        id:number_id
-      }
-    })
-    console.log(existingUser)
-   
+      where: {
+        id: number_id,
+      },
+    });
+    console.log(existingUser);
+
     if (!existingUser) {
-      return res.status(404).json({ message: "User not found" });
+      return res
+        .status(404)
+        .json({ message: "User not found in the database" });
     }
     const allCourses = await user.getCourses(existingUser.id);
     return res.status(200).json({
-      courses:allCourses
-    })
-    
+      courses: allCourses,
+    });
   } catch (error) {
     console.log(error);
-    return res.status(500).send({message:error})
-    
+    return res.status(500).send({ message: error });
   }
-}
-module.exports.GetParticularCourse=async(req,res)=>{
-  const {id}=req.params;
-  const number_id=Number(id);
+};
+module.exports.GetParticularCourse = async (req, res) => {
+  const { id } = req.params;
+  const number_id = Number(id);
   try {
-    const exist_course=await prisma.course.findFirst({
-      where:{
-        id:number_id
-      }
-    })
+    const exist_course = await prisma.course.findFirst({
+      where: {
+        id: number_id,
+      },
+    });
     console.log(exist_course);
-    if(!exist_course){
+    if (!exist_course) {
       return res.status(404).json({ message: "Course not available" });
     }
     return res.status(200).json({
-      file:exist_course
-    })
-    
+      file: exist_course,
+    });
   } catch (error) {
     console.log(error);
-    return res.status(500).send({message:error});
-    
+    return res.status(500).send({ message: error });
   }
-}
-module.exports.GetUser=async(req,res)=>{
-  const {id}=req.user;
-  const number_id=Number(id);
-  
+};
+module.exports.GetUser = async (req, res) => {
+  const { id } = req.user;
+  const number_id = Number(id);
+
   try {
-    const user_find=await prisma.user.findFirst({
-      where:{
-        id:number_id
-      
+    const user_find = await prisma.user.findFirst({
+      where: {
+        id: number_id,
       },
-    })
-    return res.status(200).json({data:user_find});
-    
+    });
+    return res.status(200).json({ data: user_find });
   } catch (error) {
     console.log(error);
-    return res.status(500).send({message:error});
-    
+    return res.status(500).send({ message: error });
   }
-}
+};
 
 module.exports.SearchCourse = async (req, res) => {
   const { search_course } = req.body;
-  const {id}=req.user;
-  const id_user=Number(id);
+  const { id } = req.user;
+  const id_user = Number(id);
   try {
     const User_find = await prisma.user.findFirst({
       where: {
-        id: id_user
+        id: id_user,
       },
       include: {
-        courses: true
-      }
+        courses: true,
+      },
     });
     const allCourses = User_find.courses;
+    
     console.log(allCourses);
-    const searchPattern = search_course.replace(/\s+/g, ''); 
-    const regexPattern = searchPattern.split('').join('.*'); 
-    const regex = new RegExp(regexPattern, 'i'); 
-    const matchingCourses = allCourses.filter(course => {
-      const courseTitleWithoutSpaces = course.title.replace(/\s+/g, ''); 
-     
-      return regex.test(courseTitleWithoutSpaces) || courseTitleWithoutSpaces.includes(searchPattern);
-    });
-    console.log(matchingCourses)
+    const searchPattern = search_course.replace(/\s+/g, "");
+    const regexPattern = searchPattern.split("").join(".*");
+    const regex = new RegExp(regexPattern, "i");
+    const matchingCourses = allCourses.filter((course) => {
+      const courseTitleWithoutSpaces = course.title.replace(/\s+/g, "");
 
-    if(matchingCourses.length>0){
-      return res.status(200).json({data:matchingCourses});
-    }
-    else{
+      return (
+        regex.test(courseTitleWithoutSpaces) ||
+        courseTitleWithoutSpaces.includes(searchPattern)
+      );
+    });
+    console.log(matchingCourses);
+
+    if (matchingCourses.length > 0) {
+      return res.status(200).json({ data: matchingCourses });
+    } else {
       console.log("aara h");
-      return res.status(404).send({message:"no course"}) ;
+      return res.status(404).send({ message: "no course" });
     }
-    } catch (error) {
+  } catch (error) {
     console.error(error);
     return res.status(500).json({ message: error });
   }
 };
 
-
 module.exports.sendMail = async (req, res) => {
   const { fromMail, toMail, content } = req.body;
-  const {file}=req;
+  const { file } = req;
   const transporter = nodemailer.createTransport({
-    service: 'gmail',
+    service: "gmail",
     auth: {
-      user: 'govindupadhyay85273@gmail.com',
-      pass: 'ulxt ahni skgw xukc' 
+      user: "govindupadhyay85273@gmail.com",
+      pass: "ulxt ahni skgw xukc",
     },
     tls: {
-      rejectUnauthorized: false
-    } 
+      rejectUnauthorized: false,
+    },
   });
- const text = `    
-    ${content}`
+  const text = `    
+    ${content}`;
 
   const mailOptions = {
     from: fromMail,
     to: toMail,
-    subject: 'Request registered',
+    subject: "Request registered",
     text: text,
     attachments: [
       {
         filename: file.originalname,
         path: file.path,
       },
-
-    ]
+    ],
   };
 
-  transporter.sendMail(mailOptions, function(error, info) {
+  transporter.sendMail(mailOptions, function (error, info) {
     if (error) {
       console.log(error);
-      res.status(500).json({ msg: 'Error sending email' });
+      res.status(500).json({ msg: "Error sending email" });
     } else {
       console.log(`Email sent: ${info.response}`);
-      res.status(200).send('Email sent successfully');
+      res.status(200).send("Email sent successfully");
     }
   });
 };
-

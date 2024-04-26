@@ -9,7 +9,7 @@ module.exports.ValidPassword = async (plainPassword, hashedPassword) => {
 
 module.exports.generateToken = (userId) => {
   try {
-    const token = jwt.sign({ userId }, process.env.SECRET, { expiresIn: "1d" });
+    const token = jwt.sign({ userId }, process.env.SECRET);
     return token;
   } catch (error) {
     console.log(error);
