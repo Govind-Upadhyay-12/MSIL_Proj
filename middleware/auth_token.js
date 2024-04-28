@@ -25,6 +25,6 @@ module.exports = async (req, res, next) => {
         next();
     } catch (error) {
         console.error(error);
-        res.status(500).json({ msg: "Internal Server Error" });
+        res.status(500).json({ msg: "Internal Server Error or token expire" });
     }
 };
