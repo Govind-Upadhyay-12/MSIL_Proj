@@ -11,6 +11,6 @@ router.get('/Courseget/:id',GetParticularCourse);
 router.get('/getUser/',auth,GetUser);
 router.post('/login',auth,login);
 router.post('/course_search/',auth,SearchCourse)
-router.post('/Contact_us',upload_email.single("file"),sendMail)
+router.post('/Contact_us',upload.single("file"),sendMail)
 
 module.exports = router;
