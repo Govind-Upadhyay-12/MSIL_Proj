@@ -123,8 +123,11 @@ module.exports.SearchCourse = async (req, res) => {
 module.exports.sendMail = async (req, res) => {
   const { fromMail, toMail, content } = req.body;
   const { file } = req;
+  if(!fromMail || !toMail || !content || !file ){
+    return res.status(404).send({message:"details is missing"});
+  }
   const transporter = nodemailer.createTransport({
-    service: "gmail",
+    service: "gmail",   
     auth: {
       user: "govindupadhyay85273@gmail.com",
       pass: "ulxt ahni skgw xukc",

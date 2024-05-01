@@ -1,11 +1,11 @@
-
+const e = require("express");
 const { prisma } = require("../DB/db.config");
 const { admin } = require("../repositories/userRepositories");
-const { user } = require("../repositories/userRepositories"); // Importing user repository
+const { user } = require("../repositories/userRepositories"); 
 
 module.exports.addCourse = async (req, res) => {
 
-  console.log("ye h req.body", req.file.filename); //YAHAN SE VODEP
+  console.log("ye h req.body", req.file.filename); 
   try {
     const video = await admin.createCourse(req.body, req.file);
     return res.status(200).send({ message: "Video uploaded" });
@@ -17,18 +17,23 @@ module.exports.addCourse = async (req, res) => {
  
 module.exports.assignCourse = async (req, res) => {
   const { userEmail, courseName } = req.body;
-   console.log(userEmail, courseName);
   try {
-    const isCourseExist = await admin.findCourse({title:courseName}); // Corrected property name to 'title'
+    if(!courseName){
+      return res.status(404).send({message:"Enter the course name"})
+    }
+    if(!userEmail){
+      return res.status(404).send({message:"user_email is not there"})
+    }
+   const isCourseExist = await admin.findCourse({title:courseName}); 
     if (!isCourseExist) {
-      return res.status(400).json({ message: "Course does not exist" }); // Updated error message
+      return res.status(400).json({ message: "Course does not exist" }); 
     }
     console.log(`course mil gya ${isCourseExist}`) 
-    const isUserExist = await user.findOne({ email:userEmail }); // Using user repository's findOne method
+    const isUserExist = await user.findOne({ email:userEmail });
     if (!isUserExist) {
       return res.status(404).json({ message: "User not found" });
     }
-    await admin.addCourse({ userId: isUserExist.id, courseId: isCourseExist.id }); // Changed 'user' to 'userId'
+    await admin.addCourse({ userId: isUserExist.id, courseId: isCourseExist.id }); 
     return res.status(200).json({ message: "Course added successfully" });
   } catch (error) {
     console.error(error);
@@ -38,6 +43,9 @@ module.exports.assignCourse = async (req, res) => {
 module.exports.Addadds=async(req,res)=>{
   console.log(req.file); 
   try {
+    if(!req.file){
+      return res.status(404).send({message:"file is not there to create adds"})
+    }
     const createAdd=await admin.createAdd(req.file);
     return res.status(200).send({message:"Add_created_successfully_to all users"});
   } catch (error) {
