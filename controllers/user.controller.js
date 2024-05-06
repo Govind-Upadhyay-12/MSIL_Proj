@@ -7,6 +7,10 @@ const nodemailer = require("nodemailer");
 
 module.exports.login = async (req, res) => {
   const user_data = req.user;
+  if (!user_data) {
+    console.error("Access attempt without authentication");
+    return res.status(401).json({ message: "Unauthorized access. Please log in." });
+  }
   try {
     return res.status(200).json({ data: user_data });
   } catch (error) {
@@ -16,6 +20,9 @@ module.exports.login = async (req, res) => {
 };
 
 module.exports.getAllCourses = async (req, res) => {
+  if (!req.user || !req.user.id) {
+    return res.status(400).json({ message: "Invalid request: User ID missing." });
+  }
   const { id } = req.user;
   console.log(id);
   const number_id = Number(id);
@@ -33,9 +40,13 @@ module.exports.getAllCourses = async (req, res) => {
         .json({ message: "User not found in the database" });
     }
     const allCourses = await user.getCourses(existingUser.id);
+    if (allCourses.length === 0) {
+      return res.status(404).json({ message: "No courses found for the user." });
+    }
     return res.status(200).json({
       courses: allCourses,
     });
+   
   } catch (error) {
     console.log(error);
     return res.status(500).send({ message: error });
@@ -43,6 +54,10 @@ module.exports.getAllCourses = async (req, res) => {
 };
 module.exports.GetParticularCourse = async (req, res) => {
   const { id } = req.params;
+  if(!id){
+    return res.status(400).json({ message: "Invalid course ID provided. ID must be a numeric value." });
+
+  }
   const number_id = Number(id);
   try {
     const exist_course = await prisma.course.findFirst({
@@ -55,7 +70,7 @@ module.exports.GetParticularCourse = async (req, res) => {
       return res.status(404).json({ message: "Course not available" });
     }
     return res.status(200).json({
-      file: exist_course,
+      course: exist_course,
     });
   } catch (error) {
     console.log(error);
@@ -63,6 +78,10 @@ module.exports.GetParticularCourse = async (req, res) => {
   }
 };
 module.exports.GetUser = async (req, res) => {
+
+  if (!req.user || !req.user.id) {
+    return res.status(400).json({ message: "Invalid request: User ID missing." });
+  }
   const { id } = req.user;
   const number_id = Number(id);
 
@@ -72,6 +91,9 @@ module.exports.GetUser = async (req, res) => {
         id: number_id,
       },
     });
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
     return res.status(200).json({ data: user_find });
   } catch (error) {
     console.log(error);
@@ -82,9 +104,15 @@ module.exports.GetUser = async (req, res) => {
 module.exports.SearchCourse = async (req, res) => {
   const { search_course } = req.body;
   const { id } = req.user;
+  if (!search_course) {
+    return res.status(400).json({ message: "Search term is required." });
+  }
+  if (!id) {
+    return res.status(400).json({ message: "Invalid or missing user ID." });
+  }
   const id_user = Number(id);
   try {
-    const User_find = await prisma.user.findFirst({
+    const userWithCourses = await prisma.user.findFirst({
       where: {
         id: id_user,
       },
@@ -92,7 +120,7 @@ module.exports.SearchCourse = async (req, res) => {
         courses: true,
       },
     });
-    const allCourses = User_find.courses;
+    const allCourses = userWithCourses.courses;
     
     console.log(allCourses);
     const searchPattern = search_course.replace(/\s+/g, "");
@@ -129,8 +157,10 @@ module.exports.sendMail = async (req, res) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",   
     auth: {
-      user: "govindupadhyay85273@gmail.com",
-      pass: "ulxt ahni skgw xukc",
+      // user: "govindupadhyay85273@gmail.com",
+      user: process.env.USER_EMAIL,
+      // pass: "ulxt ahni skgw xukc",
+      pass: process.env.USER_PASSWORD,
     },
     tls: {
       rejectUnauthorized: false,

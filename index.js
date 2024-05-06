@@ -3,9 +3,11 @@ const dotenv = require("dotenv");
 const cors = require("cors");
 const logger = require("morgan");
 const bodyParser = require("body-parser");
-
+const {connectPostgresql}=require("./DB/db.config.js")
 const app = express();
 dotenv.config();
+connectPostgresql()
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

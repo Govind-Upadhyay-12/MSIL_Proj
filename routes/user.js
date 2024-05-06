@@ -9,7 +9,7 @@ const router = require('express').Router();
 router.get('/getCourses',auth, getAllCourses);
 router.get('/Courseget/:id',GetParticularCourse);
 router.get('/getUser/',auth,GetUser);
-router.post('/login',login);
+router.post('/login',auth,login);
 router.post('/course_search/',auth,SearchCourse)
 router.post('/Contact_us',upload.single("file"),sendMail)
 
