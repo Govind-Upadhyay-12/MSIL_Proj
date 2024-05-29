@@ -15,26 +15,44 @@ datasource db {
 
 model User {
   id         Int      @id @default(autoincrement())
-  email      String   @unique
-  name       String
-  password   String
   courses    Course[]
+  REGION String
+  PARENT_GROUP_NAME String     @map("PARENT GROUP NAME")
+  DEALER_CODE String           @map("DEALER CODE")
+  DEALER_NAME String           @map("DEALER NAME")
+  DEALER_STATE String          @map("DEALER STATE")
+  DEALER_CITY String           @map("DEALER CITY")
+  EMPLOYEE_FIRSTNAME String    @map("EMPLOYEE FIRSTNAME")
+  EMPLOYEE_LASTNAME String     @map("EMPLOYEE LASTNAME")
+  DESIGNATION String           
+  DESIGNATION_DESCRIPTION String @map("DESIGNATION DESCRIPTION")
+  MSPIN_NO Int                   @map("MSPIN NO")
+  GENDER String
+  EMPLOYEE_DOJ String            @map("EMPLOYEE DOJ")
+  EMPLOYEE_DOL String            @map("EMPLOYEE DOL")
+  EMPLOYEE_MOBILE_NO  String    @map("EMPLOYEE MOBILE NO") // Change data type to BigInt
+  EMPLOYEE_TYPE String           @map("EMPLOYEE TYPE")
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }
-
+model Admin {
+  id       Int    @id @default(autoincrement())
+  email    String @unique
+  password String
+}
 model Course {
   id        Int    @id @default(autoincrement())
-  title     String
-  videoLink String
-  content   String
+  category  String
+  module_name  String
+  videoLink  String
+  content    String
+  Duration String
   user      User?   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id   Int?
-}
+} 
 model Adds{
  id        Int    @id @default(autoincrement())
  image     String
 
 }
 
-// npx prisma migrate dev --name create_user_model

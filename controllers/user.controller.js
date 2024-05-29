@@ -4,25 +4,77 @@ const { sendResponse } = require("../lib/responseManagement");
 const { user } = require("../repositories/userRepositories");
 const httpStatus = require("http-status-codes").StatusCodes;
 const nodemailer = require("nodemailer");
+const jwt=require("jsonwebtoken")
+
 
 module.exports.login = async (req, res) => {
-  const user_data = req.user;
-  if (!user_data) {
-    console.error("Access attempt without authentication");
-    return res.status(401).json({ message: "Unauthorized access. Please log in." });
-  }
+  const {
+    REGION,
+    PARENT_GROUP_NAME,
+    DEALER_CODE,
+    DEALER_NAME,
+    DEALER_STATE,
+    DEALER_CITY,
+    EMPLOYEE_FIRSTNAME,
+    EMPLOYEE_LASTNAME,
+    DESIGNATION,
+    DESIGNATION_DESCRIPTION,
+    MSPIN_NO,
+    GENDER,
+    EMPLOYEE_DOJ,
+    EMPLOYEE_DOL,
+    EMPLOYEE_MOBILE_NO,
+    EMPLOYEE_TYPE,
+   
+   } = req.body;
+
   try {
-    return res.status(200).json({ data: user_data });
+    const newUser = await prisma.user.create({
+      data: {
+        REGION,
+        PARENT_GROUP_NAME,
+        DEALER_CODE,
+        DEALER_NAME,
+        DEALER_STATE,
+        DEALER_CITY,
+        EMPLOYEE_FIRSTNAME,
+        EMPLOYEE_LASTNAME,
+        DESIGNATION,
+        DESIGNATION_DESCRIPTION,
+        MSPIN_NO,
+        GENDER,
+        EMPLOYEE_DOJ,
+        EMPLOYEE_DOL,
+        EMPLOYEE_MOBILE_NO,
+        EMPLOYEE_TYPE,
+   }
+    });
+    const token = jwt.sign(
+      { userId:newUser.id },
+       process.env.SECRET,
+      { expiresIn: '100d' }
+    );
+
+    
+    return res.status(201).json({
+      message: "User created successfully",
+      user: newUser,
+      token
+    });
+
   } catch (error) {
-    console.error("Error in login:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    console.error("Error in creating user:", error);
+    return res.status(500).json({ message: "Internal Server Error" });
   }
 };
 
+
 module.exports.getAllCourses = async (req, res) => {
+  console.log("sfndjfndijfnewifnfif")
   if (!req.user || !req.user.id) {
     return res.status(400).json({ message: "Invalid request: User ID missing." });
   }
+  console.log("req.user ki ye id hai",req.user);
   const { id } = req.user;
   console.log(id);
   const number_id = Number(id);
