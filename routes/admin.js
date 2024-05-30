@@ -8,10 +8,10 @@ router.get("/addCourse", (req, res) => {
 router.post("/admin_login",Admin_login)
 router.post("/addCourse",auth, upload.single("file"), addCourse);
 router.post("/Ads",upload.single("file"),Addadds);
-router.post("/assignCourse", assignCourse);
-router.get('/GetAllAds',GettingAdds);
-router.get('/modules_by_category',findCourseByCategory)
-router.get('/All_courses',All_Coures)
-router.get('/getAllCategoryList',GetCategory)
+router.post("/assignCourse", auth,assignCourse);
+router.get('/GetAllAds',auth,GettingAdds);
+router.get('/modules_by_category',auth,findCourseByCategory)
+router.get('/All_courses',auth,All_Coures)
+router.get('/getAllCategoryList',auth,GetCategory)
 
 module.exports = router;
