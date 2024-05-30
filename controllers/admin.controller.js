@@ -57,6 +57,7 @@ module.exports.assignCourse = async (req, res) => {
       REGION: REGION,
       MSPIN_NO: MSPIN_NO,
     };
+    console.log(query);
 
     if (REGION) {
       query.REGION = REGION;
@@ -136,7 +137,7 @@ module.exports.findCourseByCategory = async (req, res) => {
     }
     const data = await admin.findCourseByCategory(req.query);
     console.log(data);
-    return res.status(200).json({ data: data });
+    return res.status(200).json({ category: data });
   } catch (error) {
     console.log(error);
     return res.status(500).send({ message: error });
@@ -197,13 +198,4 @@ module.exports.All_Coures = async (req, res) => {
     console.log(error);
     return res.status(500).send("Internal error");
   }
-};     Find_All_Courses:async(data)=>{
-      try {
-        const all_courses=await prisma.course.findMany();
-        return all_courses
-      } catch (error) {
-        console.log(error);
-        throw new Error("Failed to search_based on category",error);
-        
-      }
-    }
+}; 
