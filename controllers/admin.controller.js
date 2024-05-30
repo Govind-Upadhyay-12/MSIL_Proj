@@ -5,28 +5,26 @@ const { user } = require("../repositories/userRepositories");
 
 const { generateToken } = require("../helper/helper");
 module.exports.addCourse = async (req, res) => {
-  console.log(req.body); 
-  console.log("ye h req.body", req.file.filename); 
+  console.log(req.body);
+  console.log("ye h req.body", req.file.filename);
 
   try {
-      const course = await admin.createCourse(req.body, req.file);
+    const course = await admin.createCourse(req.body, req.file);
 
-      return res.status(200).json({
-          statusCode: 200,
-          message: "Course added successfully",
-          course: course
-      });
+    return res.status(200).json({
+      statusCode: 200,
+      message: "Course added successfully",
+      course: course,
+    });
   } catch (error) {
-      console.error(error); 
-      return res.status(500).json({
-           statusCode:500,
-           message:"Internal server error",
-           data:error
-
-      });
+    console.error(error);
+    return res.status(500).json({
+      statusCode: 500,
+      message: "Internal server error",
+      data: error,
+    });
   }
 };
-
 
 module.exports.assignCourse = async (req, res) => {
   const { REGION, MSPIN_NO, module_name } = req.body;
@@ -88,11 +86,10 @@ module.exports.assignCourse = async (req, res) => {
       }
     }
 
-    return res
-      .status(200)
-      .json({
-        message: `Course assigned successfully to all users in the specified region`,
-      });
+    return res.status(200).json({
+      statusCode:200,
+      message: `Course assigned successfully to all users in the specified region`,
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal Server Error" });
@@ -137,15 +134,16 @@ module.exports.findCourseByCategory = async (req, res) => {
     }
     const data = await admin.findCourseByCategory(req.query);
     console.log(data);
-    return res.status(200).json({ category: data });
+    return res.status(200).json({ statusCode:200,
+      category:data
+     });
   } catch (error) {
     console.log(error);
-    return res.status(500).send({ 
-      
-      message: error });
+    return res.status(500).send({
+      message: error,
+    });
   }
 };
-
 
 module.exports.Admin_login = async (req, res) => {
   const { email, password } = req.body;
@@ -168,12 +166,12 @@ module.exports.Admin_login = async (req, res) => {
     }
 
     if (admin.password === password) {
-      const token =generateToken(admin.id)
+      const token = generateToken(admin.id);
       return res.status(200).send({
-        "statusCode":200,
-        "message":"Admin login",
-        token
-       })
+        statusCode: 200,
+        message: "Admin login",
+        token,
+      });
     } else {
       return res.status(401).json({ message: "Incorrect password" });
     }
@@ -189,38 +187,43 @@ module.exports.All_Coures = async (req, res) => {
     if (!data) {
       return res.status(404).send({ message: "no_course" });
     }
-    const courses = data.map(course => {
+    const courses = data.map((course) => {
       const { user_id, ...courseWithoutUserId } = course;
       return courseWithoutUserId;
     });
 
     return res.status(200).json({ courses: courses });
-
   } catch (error) {
     console.log(error);
     return res.status(500).send("Internal error");
   }
-
-}; 
+};
 module.exports.GetCategory = async (req, res) => {
   try {
     const allCourses = await prisma.course.findMany({
       select: {
         id: true,
-        category: true
-      }
+        category: true,
+      },
     });
     const categoryMap = new Map();
-    allCourses.forEach(course => {
+    allCourses.forEach((course) => {
       if (!categoryMap.has(course.category)) {
         categoryMap.set(course.category, course.id);
       }
     });
-    const uniqueCategories = Array.from(categoryMap, ([category, id]) => ({ id, category }));
-    res.status(200).json({ categories: uniqueCategories });
+    const uniqueCategories = Array.from(categoryMap, ([category, id]) => ({
+      id,
+      category,
+    }));
+    res.status(200).json({ 
+      statusCode:200,
+      categories: uniqueCategories });
   } catch (error) {
     console.error(error);
-    res.status(500).send("Internal error");
+    res.status(500).json({
+      statusCode:500,
+      message:error
+    });
   }
 };
-
