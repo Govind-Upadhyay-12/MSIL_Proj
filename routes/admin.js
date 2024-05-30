@@ -11,6 +11,6 @@ router.post("/Ads",upload.single("file"),Addadds);
 router.post("/assignCourse", assignCourse);
 router.get('/GetAllAds',GettingAdds);
 router.get('/modules_by_category',findCourseByCategory)
-router.get('/All_courses',All_Coures)
+router.post('/All_courses',All_Coures)
 
 module.exports = router;
