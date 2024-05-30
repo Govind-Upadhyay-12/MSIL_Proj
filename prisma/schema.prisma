@@ -46,7 +46,7 @@ model Course {
   module_name  String
   videoLink  String
   content    String
-  Duration String
+  duration String
   user      User?   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id   Int?
 } 

@@ -36,6 +36,7 @@ module.exports = {
   },
   admin: {
     createCourse: async (data, file) => {
+      console.log("cndknfdk",data)
       try {
         return await prisma.course.create({
           data: {
@@ -43,7 +44,7 @@ module.exports = {
             module_name: data.module_name,
             videoLink: file.path,
             content: data.content,
-            Duration: data.Duration,
+            duration: data.duration,
           },
         });
       } catch (error) {
