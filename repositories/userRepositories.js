@@ -100,6 +100,7 @@ module.exports = {
             category: category,
           },
           select: {
+            id: true,
             module_name: true,
           },
         });
