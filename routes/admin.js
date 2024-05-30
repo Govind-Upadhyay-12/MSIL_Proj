@@ -12,6 +12,6 @@ router.post("/assignCourse", assignCourse);
 router.get('/GetAllAds',GettingAdds);
 router.get('/modules_by_category',findCourseByCategory)
 router.get('/All_courses',All_Coures)
-router.get('/all_category',GetCategory)
+router.get('/getAllCategoryList',GetCategory)
 
 module.exports = router;
