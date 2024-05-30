@@ -2,6 +2,7 @@ const e = require("express");
 const { prisma } = require("../DB/db.config");
 const { admin } = require("../repositories/userRepositories");
 const { user } = require("../repositories/userRepositories");
+const { generateToken } = require("../helper/helper");
 
 module.exports.addCourse = async (req, res) => {
   console.log(req.body); 
@@ -141,6 +142,8 @@ module.exports.findCourseByCategory = async (req, res) => {
     return res.status(500).send({ message: error });
   }
 };
+
+
 module.exports.Admin_login = async (req, res) => {
   const { email, password } = req.body;
 
@@ -162,7 +165,12 @@ module.exports.Admin_login = async (req, res) => {
     }
 
     if (admin.password === password) {
-      return res.status(200).json({ message: "Login successful" });
+      const token =generateToken(admin.id)
+      return res.status(200).send({
+        "statusCode":200,
+        "message":"Admin login",
+        token
+       })
     } else {
       return res.status(401).json({ message: "Incorrect password" });
     }
@@ -171,6 +179,7 @@ module.exports.Admin_login = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
+
 module.exports.All_Coures = async (req, res) => {
   try {
     const { start, length, columns, order, search, draw } = req.body;
