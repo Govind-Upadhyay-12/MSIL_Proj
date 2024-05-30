@@ -2,8 +2,8 @@ const e = require("express");
 const { prisma } = require("../DB/db.config");
 const { admin } = require("../repositories/userRepositories");
 const { user } = require("../repositories/userRepositories");
-const { generateToken } = require("../helper/helper");
 
+const { generateToken } = require("../helper/helper");
 module.exports.addCourse = async (req, res) => {
   console.log(req.body); 
   console.log("ye h req.body", req.file.filename); 
@@ -182,25 +182,28 @@ module.exports.Admin_login = async (req, res) => {
 
 module.exports.All_Coures = async (req, res) => {
   try {
-    const { start, length, columns, order, search, draw } = req.body;
-    const offset = start;
-    const limit = length;
-    const sortColumn = columns[order[0].column].data;
-    const sortOrder = order[0].dir;
-    const searchValue = search.value;
-    const courses = await admin.findWithPagination(
-      limit,
-      offset,
-      sortColumn + " " + sortOrder,
-      columns,
-      searchValue,
-      {}
-    );
-    const count = await admin.count({});
-    const scount = await adminRepo.scount(columns, searchValue, {});
-    res.send(200).send({courses:courses,draw:draw,recordsTotal:count.total,recordsFiltered: scount.total,})
+    const data = await admin.Find_All_Courses();
+    if (!data) {
+      return res.status(404).send({ message: "no_course" });
+    }
+    const courses = data.map(course => {
+      const { user_id, ...courseWithoutUserId } = course;
+      return courseWithoutUserId;
+    });
+
+    return res.status(200).json({ courses: courses });
+
   } catch (error) {
     console.log(error);
-    return res.status(500).send("Internal error", error);
+    return res.status(500).send("Internal error");
   }
-};
+};     Find_All_Courses:async(data)=>{
+      try {
+        const all_courses=await prisma.course.findMany();
+        return all_courses
+      } catch (error) {
+        console.log(error);
+        throw new Error("Failed to search_based on category",error);
+        
+      }
+    }

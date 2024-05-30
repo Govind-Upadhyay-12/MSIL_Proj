@@ -200,6 +200,7 @@ module.exports.SearchCourse = async (req, res) => {
   }
 };
 
+
 module.exports.sendMail = async (req, res) => {
   const { fromMail, toMail, content } = req.body;
   const { file } = req;
@@ -209,9 +210,7 @@ module.exports.sendMail = async (req, res) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",   
     auth: {
-      // user: "govindupadhyay85273@gmail.com",
       user: process.env.USER_EMAIL,
-      // pass: "ulxt ahni skgw xukc",
       pass: process.env.USER_PASSWORD,
     },
     tls: {
@@ -243,4 +242,5 @@ module.exports.sendMail = async (req, res) => {
       res.status(200).send("Email sent successfully");
     }
   });
+
 };
