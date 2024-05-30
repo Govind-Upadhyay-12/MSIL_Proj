@@ -4,18 +4,28 @@ const { admin } = require("../repositories/userRepositories");
 const { user } = require("../repositories/userRepositories");
 
 module.exports.addCourse = async (req, res) => {
-  console.log(req.body);
-  console.log("ye h req.body", req.file.filename);
+  console.log(req.body); 
+  console.log("ye h req.body", req.file.filename); 
+
   try {
-    const video = await admin.createCourse(req.body, req.file);
-    return res
-      .status(200)
-      .send({ message: "Course have successfully made   " });
+      const course = await admin.createCourse(req.body, req.file);
+
+      return res.status(200).json({
+          statusCode: 200,
+          message: "Course added successfully",
+          course: course
+      });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Internal Server Error" });
+      console.error(error); 
+      return res.status(500).json({
+           statusCode:500,
+           message:"Internal server error",
+           data:error
+
+      });
   }
 };
+
 
 module.exports.assignCourse = async (req, res) => {
   const { REGION, MSPIN_NO, module_name } = req.body;
