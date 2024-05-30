@@ -140,7 +140,9 @@ module.exports.findCourseByCategory = async (req, res) => {
     return res.status(200).json({ category: data });
   } catch (error) {
     console.log(error);
-    return res.status(500).send({ message: error });
+    return res.status(500).send({ 
+      
+      message: error });
   }
 };
 
@@ -198,4 +200,27 @@ module.exports.All_Coures = async (req, res) => {
     console.log(error);
     return res.status(500).send("Internal error");
   }
+
 }; 
+module.exports.GetCategory = async (req, res) => {
+  try {
+    const allCourses = await prisma.course.findMany({
+      select: {
+        id: true,
+        category: true
+      }
+    });
+    const categoryMap = new Map();
+    allCourses.forEach(course => {
+      if (!categoryMap.has(course.category)) {
+        categoryMap.set(course.category, course.id);
+      }
+    });
+    const uniqueCategories = Array.from(categoryMap, ([category, id]) => ({ id, category }));
+    res.status(200).json({ categories: uniqueCategories });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal error");
+  }
+};
+

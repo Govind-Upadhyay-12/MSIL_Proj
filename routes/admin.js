@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const {addCourse, assignCourse,Addadds,GettingAdds,findCourseByCategory,Admin_login,All_Coures} = require("../controllers/admin.controller.js");
+const {addCourse, assignCourse,Addadds,GettingAdds,findCourseByCategory,Admin_login,All_Coures,GetCategory} = require("../controllers/admin.controller.js");
 const { upload } = require("../helper/helper.js");
 const auth=require("../middleware/auth_token.js")
 router.get("/addCourse", (req, res) => {
@@ -12,5 +12,6 @@ router.post("/assignCourse", assignCourse);
 router.get('/GetAllAds',GettingAdds);
 router.get('/modules_by_category',findCourseByCategory)
 router.get('/All_courses',All_Coures)
+router.get('/all_category',GetCategory)
 
 module.exports = router;
