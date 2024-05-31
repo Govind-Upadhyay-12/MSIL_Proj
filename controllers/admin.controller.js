@@ -198,6 +198,7 @@ module.exports.All_Courses = async (req, res) => {
       const scount = await admin.scount(columns, searchValue);
 
       res.send({
+         statusCode: 200,
           courses: courses,
           draw: draw,
           recordsTotal: count,
