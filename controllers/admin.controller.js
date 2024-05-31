@@ -2,6 +2,7 @@ const e = require("express");
 const { prisma } = require("../DB/db.config");
 const { admin } = require("../repositories/userRepositories");
 const { user } = require("../repositories/userRepositories");
+const path=require("path")
 
 const { generateToken } = require("../helper/helper");
 module.exports.addCourse = async (req, res) => {
@@ -230,3 +231,15 @@ module.exports.GetCategory = async (req, res) => {
     });
   }
 };
+module.exports.fileUploadGet=async(req,res)=>{
+  try {
+    const fileName=req.params.fileName;
+    console.log(fileName)
+    const filePath = path.join(__dirname,'..', 'uploads', fileName);
+    return res.status(200).sendFile(filePath);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({message:error})
+    
+  }
+}

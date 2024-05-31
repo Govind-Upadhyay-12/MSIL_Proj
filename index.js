@@ -5,7 +5,7 @@
   const bodyParser = require("body-parser");
   const {connectPostgresql}=require("./DB/db.config.js")
   const config = require("./dbconfig.js");
-  const sql = require('mysql');
+  const path = require('path');
   const app = express();
   dotenv.config();
   connectPostgresql()
@@ -20,11 +20,8 @@
   app.get('/',(req,res)=>{
     res.send("server is running on Aws")
   })
-  app.use(require("./routes/index.js"));
-
-     
-
-
-  app.listen(8080, () => {
+  app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+   app.use(require("./routes/index.js"));
+   app.listen(8080, () => {
     console.log(`Server is running on port ${8080}`);
   });
