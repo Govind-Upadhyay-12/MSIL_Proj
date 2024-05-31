@@ -149,16 +149,6 @@ module.exports = {
           },
           take: limit,
           skip: offset,
-          select:{
-            id: true,
-            category: true,
-            module_name: true,
-            videoLink: true,
-            content: true,
-            duration: true,
-            created_at: true,
-            updated_at: true,
-          }
       });
   },
 
