@@ -26,51 +26,39 @@ module.exports.addCourse = async (req, res) => {
   }
 };
 
+
 module.exports.assignCourse = async (req, res) => {
   const { REGION, MSPIN_NO, module_name } = req.body;
-  console.log("ye hai assign vala",req.body);
+  console.log("Request body in assign:", req.body);
 
-  if (!REGION && !MSPIN_NO && !DEALER_NAME) {
-    return res
-      .status(404)
-      .send({ message: "Enter one field to assign a course" });
+  if (!REGION && !MSPIN_NO) {
+    return res.status(404).send({ message: "Enter at least one field to assign a course: REGION or MSPIN_NO." });
   }
 
   if (!module_name) {
-    return res.status(404).send({ message: "Enter the course name" });
+    return res.status(404).send({ message: "Enter the course name." });
   }
 
   try {
     const course = await prisma.course.findFirst({
-      where: {
-        module_name: module_name,
-      },
+      where: { module_name },
     });
 
     if (!course) {
-      return res.status(400).json({ message: "Course does not exist" });
+      return res.status(400).json({ message: "Course does not exist." });
     }
     console.log(`Course found: ${course.module_name}`);
 
-    const query = {
-      REGION: REGION,
-      MSPIN_NO: MSPIN_NO,
-    };
-    console.log(query);
+    let query = {};
+    if (REGION) query.REGION = REGION;
+    if (MSPIN_NO) query.MSPIN_NO = MSPIN_NO;
 
-    if (REGION) {
-      query.REGION = REGION;
-    }
-    if (MSPIN_NO) {
-      query.MSPIN_NO = MSPIN_NO;
-    }
     const users = await prisma.user.findMany({ where: query });
 
     if (users.length === 0) {
-      return res
-        .status(404)
-        .send({ message: "No users found for the given criteria" });
+      return res.status(404).send({ message: "No users found for the given criteria." });
     }
+
     for (const user of users) {
       try {
         await prisma.user.update({
@@ -81,21 +69,23 @@ module.exports.assignCourse = async (req, res) => {
             },
           },
         });
-        console.log(`Course ${course.id} added to user ${user.id}`);
+        console.log(`Course ${course.id} assigned to user ${user.id}`);
       } catch (error) {
         console.error("Error in adding course to user:", error);
+        // Continue processing other users even if one fails
       }
     }
 
     return res.status(200).json({
-      statusCode:200,
-      message: `Course assigned successfully to all users in the specified region`,
+      statusCode: 200,
+      message: `Course assigned successfully to all users based on the provided criteria.`,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Internal Server Error:", error);
     return res.status(500).json({ message: "Internal Server Error" });
   }
 };
+
 module.exports.Addadds = async (req, res) => {
   console.log(req.file);
   try {
