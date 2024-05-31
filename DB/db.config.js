@@ -5,7 +5,7 @@ module.exports.prisma = new PrismaClient({
   log: ["query"],
 });
 
-async function connectPostgresql() {
+async function  connectPostgresql() {
   try {
     await prisma.$connect();
     console.log("🚀 Database connected successfully");

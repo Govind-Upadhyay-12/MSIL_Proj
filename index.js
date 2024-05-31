@@ -22,9 +22,7 @@
   })
   app.use(require("./routes/index.js"));
 
-  
- 
-  // connectToDatabase();
+     
 
 
   app.listen(8080, () => {

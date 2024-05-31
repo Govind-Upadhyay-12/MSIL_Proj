@@ -182,6 +182,7 @@ module.exports.Admin_login = async (req, res) => {
 };
 
 module.exports.All_Coures = async (req, res) => {
+  console.log("ye hai all_courses",req.body);
   try {
     const data = await admin.Find_All_Courses();
     if (!data) {
