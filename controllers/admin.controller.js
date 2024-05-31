@@ -73,7 +73,6 @@ module.exports.assignCourse = async (req, res) => {
         console.log(`Course ${course.id} assigned to user ${user.id}`);
       } catch (error) {
         console.error("Error in adding course to user:", error);
-        // Continue processing other users even if one fails
       }
     }
 

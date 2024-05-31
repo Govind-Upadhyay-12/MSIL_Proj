@@ -41,17 +41,18 @@ model Admin {
   password String
 }
 model Course {
-  id        Int    @id @default(autoincrement())
-  category  String
-  module_name  String
-  videoLink  String
-  content    String
-  duration String
-  user      User?   @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id   Int?
-  created_at DateTime @default(now())
-  updated_at DateTime  @default(now())
-} 
+  id          Int      @id @default(autoincrement())
+  category    String
+  module_name String
+  videoLink   String
+  content     String
+  duration    String
+  user        User?    @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id     Int?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
+
 model Adds{
  id        Int    @id @default(autoincrement())
  image     String
