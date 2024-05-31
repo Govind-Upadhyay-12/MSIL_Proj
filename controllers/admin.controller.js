@@ -28,6 +28,7 @@ module.exports.addCourse = async (req, res) => {
 
 module.exports.assignCourse = async (req, res) => {
   const { REGION, MSPIN_NO, module_name } = req.body;
+  console.log("ye hai assign vala",req.body);
 
   if (!REGION && !MSPIN_NO && !DEALER_NAME) {
     return res
