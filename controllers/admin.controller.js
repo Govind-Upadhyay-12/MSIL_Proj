@@ -181,24 +181,34 @@ module.exports.Admin_login = async (req, res) => {
   }
 };
 
-module.exports.All_Coures = async (req, res) => {
-  console.log("ye hai all_courses",req.body);
-  try {
-    const data = await admin.Find_All_Courses();
-    if (!data) {
-      return res.status(404).send({ message: "no_course" });
-    }
-    const courses = data.map((course) => {
-      const { user_id, ...courseWithoutUserId } = course;
-      return courseWithoutUserId;
-    });
 
-    return res.status(200).json({ courses: courses });
+
+module.exports.All_Courses = async (req, res) => {
+  try {
+      const { start, length, columns, order, search, draw } = req.body;
+
+      const offset = start;
+      const limit = length;
+      const sortColumn = columns[order[0].column].data;
+      const sortOrder = order[0].dir;
+      const searchValue = search.value;
+
+      const courses = await admin.findWithPagination(limit, offset, sortColumn, sortOrder, columns, searchValue);
+      const count = await admin.count();
+      const scount = await admin.scount(columns, searchValue);
+
+      res.send({
+          courses: courses,
+          draw: draw,
+          recordsTotal: count,
+          recordsFiltered: scount
+      });
   } catch (error) {
-    console.log(error);
-    return res.status(500).send("Internal error");
+      console.error(error);
+      responseManagement.sendResponse(res, httpStatus.INTERNAL_SERVER_ERROR, global.internal_server_error);
   }
 };
+
 module.exports.GetCategory = async (req, res) => {
   try {
     const allCourses = await prisma.course.findMany({

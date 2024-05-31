@@ -123,6 +123,61 @@ module.exports = {
         throw new Error("Failed to search_based on category",error);
         
       }
-    }
+    },
+    findWithPagination: async (limit, offset, sortColumn, sortOrder, columns, searchValue) => {
+      let where = {};
+
+      if (searchValue) {
+          const searchConditions = columns
+              .filter(column => column.searchable && column.name)
+              .map(column => ({
+                  [column.name]: {
+                      contains: searchValue,
+                      mode: 'insensitive'
+                  }
+              }));
+
+          where = {
+              OR: searchConditions
+          };
+      }
+
+      return await prisma.course.findMany({
+          where: where,
+          orderBy: {
+              [sortColumn]: sortOrder
+          },
+          take: limit,
+          skip: offset
+      });
   },
+
+  scount: async (columns, searchValue) => {
+      let where = {};
+
+      if (searchValue) {
+          const searchConditions = columns
+              .filter(column => column.searchable && column.name)
+              .map(column => ({
+                  [column.name]: {
+                      contains: searchValue,
+                      mode: 'insensitive'
+                  }
+              }));
+
+          where = {
+              OR: searchConditions
+          };
+      }
+
+      return await prisma.course.count({
+          where: where
+      });
+  },
+
+  count: async () => {
+      return await prisma.course.count();
+  }
+}
+
 };
