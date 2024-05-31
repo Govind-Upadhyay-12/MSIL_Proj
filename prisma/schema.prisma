@@ -49,6 +49,8 @@ model Course {
   duration String
   user      User?   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id   Int?
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 } 
 model Adds{
  id        Int    @id @default(autoincrement())
