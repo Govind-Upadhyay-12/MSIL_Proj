@@ -42,7 +42,7 @@ module.exports = {
           data: {
             category: data.category,
             module_name: data.module_name,
-            videoLink: file.path,
+            videoLink: file.originalname,
             content: data.content,
             duration: data.duration,
           },
