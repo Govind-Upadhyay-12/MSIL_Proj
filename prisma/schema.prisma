@@ -15,7 +15,7 @@ datasource db {
 
 model User {
   id         Int      @id @default(autoincrement())
-  courses    Course[]
+  courses    Course[] 
   REGION String
   PARENT_GROUP_NAME String     @map("PARENT GROUP NAME")
   DEALER_CODE String           @map("DEALER CODE")
@@ -50,7 +50,7 @@ model Course {
   user      User?   @relation(fields: [user_id], references: [id], onDelete: Cascade)
   user_id   Int?
   created_at DateTime @default(now())
-  updated_at DateTime  
+  updated_at DateTime  @default(now())
 } 
 model Adds{
  id        Int    @id @default(autoincrement())
