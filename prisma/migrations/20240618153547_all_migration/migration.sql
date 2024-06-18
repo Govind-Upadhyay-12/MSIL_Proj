@@ -1,0 +1,62 @@
+-- CreateTable
+CREATE TABLE "User" (
+    "id" SERIAL NOT NULL,
+    "REGION" TEXT NOT NULL,
+    "PARENT GROUP NAME" TEXT NOT NULL,
+    "DEALER CODE" TEXT NOT NULL,
+    "DEALER NAME" TEXT NOT NULL,
+    "DEALER STATE" TEXT NOT NULL,
+    "DEALER CITY" TEXT NOT NULL,
+    "EMPLOYEE FIRSTNAME" TEXT NOT NULL,
+    "EMPLOYEE LASTNAME" TEXT NOT NULL,
+    "DESIGNATION" TEXT NOT NULL,
+    "DESIGNATION DESCRIPTION" TEXT NOT NULL,
+    "MSPIN NO" INTEGER NOT NULL,
+    "GENDER" TEXT NOT NULL,
+    "EMPLOYEE DOJ" TEXT NOT NULL,
+    "EMPLOYEE DOL" TEXT NOT NULL,
+    "EMPLOYEE MOBILE NO" TEXT NOT NULL,
+    "EMPLOYEE TYPE" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Admin" (
+    "id" SERIAL NOT NULL,
+    "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+
+    CONSTRAINT "Admin_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Course" (
+    "id" SERIAL NOT NULL,
+    "category" TEXT NOT NULL,
+    "module_name" TEXT NOT NULL,
+    "videoLink" TEXT NOT NULL,
+    "content" TEXT NOT NULL,
+    "duration" TEXT NOT NULL,
+    "user_id" INTEGER,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Course_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Adds" (
+    "id" SERIAL NOT NULL,
+    "image" TEXT NOT NULL,
+
+    CONSTRAINT "Adds_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Admin_email_key" ON "Admin"("email");
+
+-- AddForeignKey
+ALTER TABLE "Course" ADD CONSTRAINT "Course_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;

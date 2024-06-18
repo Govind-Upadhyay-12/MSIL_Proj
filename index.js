@@ -7,7 +7,7 @@
   const config = require("./dbconfig.js");
   const path = require('path');
   const app = express();
-  dotenv.config();
+  dotenv.config(); 
   connectPostgresql()
 
   app.use(cors());
