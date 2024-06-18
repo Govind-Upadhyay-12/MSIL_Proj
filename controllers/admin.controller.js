@@ -242,3 +242,82 @@ module.exports.fileUploadGet=async(req,res)=>{
     
   }
 }
+module.exports.initialize_table=async(req,res)=>{
+  const { courseId, numProblems, numComponents } = req.body;
+  try {
+    const maxProblemId = await prisma.problem.findFirst({
+      where: { course_id: courseId },
+      orderBy: { id: 'desc' }
+    });
+    const maxComponentId = await prisma.component.findFirst({
+      where: { course_id: courseId },
+      orderBy: { id: 'desc' }
+    });
+
+    const startProblemId = maxProblemId ? maxProblemId.id + 1 : 1;
+    const startComponentId = maxComponentId ? maxComponentId.id + 1 : 1;
+
+    const problems = await Promise.all(
+      Array.from({ length: numProblems }).map((_, index) =>
+        prisma.problem.create({
+          data: {
+            id: startProblemId + index,
+            name: `Problem ${index + 1}`,
+            description: 'Description',
+            course: { connect: { id: courseId } }
+          }
+        })
+      )
+    );
+
+    const components = await Promise.all(
+      Array.from({ length: numComponents }).map((_, index) =>
+        prisma.component.create({
+          data: {
+            id: startComponentId + index,
+            name: `Component ${index + 1}`,
+            description: 'Description',
+            course: { connect: { id: courseId } }
+          }
+        })
+      )
+    );
+
+    res.json({ problems, components });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while initializing the table.' });
+  }
+}
+
+
+module.exports.map_component= async (req, res) => {
+  const { mappings } = req.body;
+
+  try {
+    const componentProblems = await Promise.all(
+      mappings.map((mapping) =>
+        prisma.componentProblem.create({
+          data: {
+            problem: { connect: { id: mapping.problemId } },
+            component: { connect: { id: mapping.componentId } }
+          },
+          include: {
+            problem: true,
+            component: true
+          }
+        })
+      )
+    );
+
+    const tableData = componentProblems.map(cp => ({
+      ProblemName: cp.problem.name,
+      ComponentName: cp.component.name
+    }));
+
+    res.json({ tableData });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while mapping components to problems.' });
+  }
+}

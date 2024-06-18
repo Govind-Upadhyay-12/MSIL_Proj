@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -12,48 +6,80 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 model User {
-  id         Int      @id @default(autoincrement())
-  courses    Course[] 
-  REGION String
-  PARENT_GROUP_NAME String     @map("PARENT GROUP NAME")
-  DEALER_CODE String           @map("DEALER CODE")
-  DEALER_NAME String           @map("DEALER NAME")
-  DEALER_STATE String          @map("DEALER STATE")
-  DEALER_CITY String           @map("DEALER CITY")
-  EMPLOYEE_FIRSTNAME String    @map("EMPLOYEE FIRSTNAME")
-  EMPLOYEE_LASTNAME String     @map("EMPLOYEE LASTNAME")
-  DESIGNATION String           
-  DESIGNATION_DESCRIPTION String @map("DESIGNATION DESCRIPTION")
-  MSPIN_NO Int                   @map("MSPIN NO")
-  GENDER String
-  EMPLOYEE_DOJ String            @map("EMPLOYEE DOJ")
-  EMPLOYEE_DOL String            @map("EMPLOYEE DOL")
-  EMPLOYEE_MOBILE_NO  String    @map("EMPLOYEE MOBILE NO") 
-  EMPLOYEE_TYPE String           @map("EMPLOYEE TYPE")
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id                      Int       @id @default(autoincrement())
+  courses                 Course[]
+  REGION                  String
+  PARENT_GROUP_NAME       String    @map("PARENT GROUP NAME")
+  DEALER_CODE             String    @map("DEALER CODE")
+  DEALER_NAME             String    @map("DEALER NAME")
+  DEALER_STATE            String    @map("DEALER STATE")
+  DEALER_CITY             String    @map("DEALER CITY")
+  EMPLOYEE_FIRSTNAME      String    @map("EMPLOYEE FIRSTNAME")
+  EMPLOYEE_LASTNAME       String    @map("EMPLOYEE LASTNAME")
+  DESIGNATION             String
+  DESIGNATION_DESCRIPTION String    @map("DESIGNATION DESCRIPTION")
+  MSPIN_NO                Int       @map("MSPIN NO")
+  GENDER                  String
+  EMPLOYEE_DOJ            String    @map("EMPLOYEE DOJ")
+  EMPLOYEE_DOL            String    @map("EMPLOYEE DOL")
+  EMPLOYEE_MOBILE_NO      String    @map("EMPLOYEE MOBILE NO")
+  EMPLOYEE_TYPE           String    @map("EMPLOYEE TYPE")
+  created_at              DateTime  @default(now())
+  updated_at              DateTime  @updatedAt
 }
+
 model Admin {
   id       Int    @id @default(autoincrement())
   email    String @unique
   password String
 }
-model Course {
-  id        Int    @id @default(autoincrement())
-  category  String
-  module_name  String
-  videoLink  String
-  content    String
-  duration String
-  user      User?   @relation(fields: [user_id], references: [id], onDelete: Cascade)
-  user_id   Int?
-  created_at DateTime @default(now())
-  updated_at DateTime  @default(now())
-} 
-model Adds{
- id        Int    @id @default(autoincrement())
- image     String
 
+model Course {
+  id          Int          @id @default(autoincrement())
+  category    String
+  module_name String
+  videoLink   String
+  content     String
+  duration    String
+  user        User?        @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  user_id     Int?
+  problems    Problem[]
+  components  Component[]
+  created_at  DateTime     @default(now())
+  updated_at  DateTime     @default(now())
 }
 
+model Problem {
+  id                Int                @id @default(autoincrement())
+  name              String
+  description       String?
+  course            Course?            @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  course_id         Int?
+  componentProblems ComponentProblem[]
+}
+
+model Component {
+  id                Int                @id @default(autoincrement())
+  name              String
+  description       String?
+  course            Course?            @relation(fields: [course_id], references: [id], onDelete: Cascade)
+  course_id         Int?
+  componentProblems ComponentProblem[]
+}
+
+model ComponentProblem {
+  id          Int        @id @default(autoincrement())
+  problem     Problem    @relation(fields: [problem_id], references: [id], onDelete: Cascade)
+  problem_id  Int
+  component   Component  @relation(fields: [component_id], references: [id], onDelete: Cascade)
+  component_id Int
+  created_at  DateTime   @default(now())
+  updated_at  DateTime   @default(now())
+}
+
+model Adds {
+  id          Int        @id @default(autoincrement())
+  image       String
+}
