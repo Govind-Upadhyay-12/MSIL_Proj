@@ -40,7 +40,7 @@ model Course {
   id          Int          @id @default(autoincrement())
   category    String
   module_name String
-  videoLink   String
+  videoLink   String?
   content     String
   duration    String
   user        User?        @relation(fields: [user_id], references: [id], onDelete: Cascade)

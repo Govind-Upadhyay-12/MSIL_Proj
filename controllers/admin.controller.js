@@ -2,6 +2,9 @@ const e = require("express");
 const { prisma } = require("../DB/db.config");
 const { admin } = require("../repositories/userRepositories");
 const { user } = require("../repositories/userRepositories");
+const csvParser = require('csv-parser');
+const fs = require('fs');
+
 const path=require("path")
 
 const { generateToken } = require("../helper/helper");
@@ -26,8 +29,6 @@ module.exports.addCourse = async (req, res) => {
     });
   }
 };
-
-
 module.exports.assignCourse = async (req, res) => {
   const { REGION, MSPIN_NO, module_name } = req.body;
   console.log("Request body in assign:", req.body);
@@ -319,5 +320,46 @@ module.exports.map_component= async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'An error occurred while mapping components to problems.' });
+  }
+}
+module.exports.AddCourse_csv=async(req,res)=>{
+  try {
+    const file = req.file;
+
+    if (!file) {
+      return res.status(400).send('No file uploaded.');
+    }
+    const results = [];
+
+  fs.createReadStream(file.path)
+  .pipe(csvParser())
+  .on('data', (data) => results.push(data))
+  .on('end', async () => {
+    try {
+      for (const course of results) {
+        await prisma.course.create({
+          data: {
+            category: course.category,
+            module_name: course.module_name,
+            content: course.content,
+            duration: course.duration,
+            created_at: new Date(),
+            updated_at: new Date(),
+          },
+        });
+      }
+      res.send('Courses added successfully!');
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('An error occurred while adding courses.');
+    } finally {
+      fs.unlinkSync(file.path);
+    }
+  });
+    
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send({error:error})
+    
   }
 }
