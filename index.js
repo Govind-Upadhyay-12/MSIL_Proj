@@ -9,7 +9,7 @@ const path = require('path');
 const app = express();
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-const admim=require("./backend/admin/dist/admin")
+
 
 dotenv.config(); 
 connectPostgresql();
@@ -111,9 +111,9 @@ app.post('/map-components-problems', async (req, res) => {
 });
 
 
-app.use("/admin", express.static(path.join(__dirname, "backend/admin/dist/admin")));
+app.use("/admin", express.static(path.join(__dirname, "./admin/dist/admin")));
 app.get(/\/admin\/.*/, (req, res) => {
-  res.sendFile(path.join(__dirname, "backend/admin/dist/admin/index.html"));
+  res.sendFile(path.join(__dirname, "./admin/dist/admin/index.html"));
 });
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(require("./routes/index.js"));
