@@ -111,11 +111,10 @@ app.post('/map-components-problems', async (req, res) => {
 });
 
 
-app.use("/admin", express.static(path.join(__dirname, "./backend/admin/dist/admin")));
+app.use("/admin", express.static(path.join(__dirname, "backend/admin/dist/admin")));
 app.get(/\/admin\/.*/, (req, res) => {
-  res.sendFile(path.join(__dirname, "./backend/admin/dist/admin/index.html"));
+  res.sendFile(path.join(__dirname, "backend/admin/dist/admin/index.html"));
 });
-
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(require("./routes/index.js"));
 
