@@ -9,6 +9,7 @@
   const app = express();
   const { PrismaClient } = require('@prisma/client');
   const prisma = new PrismaClient();
+
   dotenv.config(); 
   connectPostgresql()
 
@@ -109,9 +110,9 @@
       res.status(500).json({ error: 'An error occurred while mapping components to problems.' });
     }
   });
-  app.use("/admin", express.static(path.join(__dirname, "../admin/dist/admin")));
+  app.use("/admin", express.static(path.join(__dirname, "./admin/dist/admin")));
 app.get(/\/admin\/.*/, (req, res) => {
-  res.sendFile(path.join(__dirname, "../admin/dist/admin/index.html"));
+  res.sendFile(path.join(__dirname, "./admin/dist/admin/index.html"));
 });
   app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
    app.use(require("./routes/index.js"));
