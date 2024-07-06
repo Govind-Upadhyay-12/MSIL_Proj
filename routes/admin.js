@@ -17,7 +17,7 @@ router.get('/uploads/:fileName',fileUploadGet)
 router.post('/initialize-table',initialize_table)
 router.post('/map-component',map_component)
 router.post("/addCourse_csv", upload.single("file"), AddCourse_csv);
-router.get("/deleteCourse",deleteCourse)
+router.delete("/deleteCourse",deleteCourse)
 
 
 module.exports = router;
