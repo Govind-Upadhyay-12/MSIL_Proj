@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const {addCourse, assignCourse,Addadds,GettingAdds,findCourseByCategory,Admin_login,All_Courses,GetCategory,fileUploadGet, initialize_table, map_component, AddCourse_csv} = require("../controllers/admin.controller.js");
+const {addCourse, assignCourse,Addadds,GettingAdds,findCourseByCategory,Admin_login,All_Courses,GetCategory,fileUploadGet, initialize_table, map_component, AddCourse_csv, deleteCourse} = require("../controllers/admin.controller.js");
 const { upload } = require("../helper/helper.js");
 const auth=require("../middleware/auth_token.js")
 router.get("/addCourse", (req, res) => {
@@ -17,6 +17,7 @@ router.get('/uploads/:fileName',fileUploadGet)
 router.post('/initialize-table',initialize_table)
 router.post('/map-component',map_component)
 router.post("/addCourse_csv", upload.single("file"), AddCourse_csv);
+router.get("/deleteCourse",deleteCourse)
 
 
 module.exports = router;

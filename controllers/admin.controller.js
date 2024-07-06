@@ -172,9 +172,6 @@ module.exports.Admin_login = async (req, res) => {
     return res.status(500).json({ message: "Internal server error" });
   }
 };
-
-
-
 module.exports.All_Courses = async (req, res) => {
   try {
       const { start, length, columns, order, search, draw } = req.body;
@@ -348,7 +345,9 @@ module.exports.AddCourse_csv=async(req,res)=>{
           },
         });
       }
-      res.send('Courses added successfully!');
+    return res.status(200).json({statusCode:200,
+      message:"courses added successfully"
+    })
     } catch (error) {
       console.error(error);
       res.status(500).send('An error occurred while adding courses.');
@@ -363,3 +362,31 @@ module.exports.AddCourse_csv=async(req,res)=>{
     
   }
 }
+
+module.exports.deleteCourse = async (req, res) => {
+  try {
+    const { id } = req.query;
+
+    if (!id) {
+      return res.status(400).send('Course ID is required');
+    }
+
+    const courseId = parseInt(id);
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+    });
+
+    if (!course) {
+      return res.status(404).send('Course not found');
+    }
+
+    await prisma.course.delete({
+      where: { id: courseId },
+    });
+
+    res.status(200).json({statusCode:200,message:"courses delete successfully"});
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({statusCode:500,message:error});
+  }
+};
