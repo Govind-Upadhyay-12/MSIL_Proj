@@ -390,3 +390,31 @@ module.exports.deleteCourse = async (req, res) => {
     res.status(500).send({statusCode:500,message:error});
   }
 };
+
+module.exports.All_Users_Courses = async (req, res) => {
+  console.log(req.body);
+  try {
+    const { start, length, columns, order, search, draw } = req.body;
+
+    const offset = start;
+    const limit = length;
+    const sortColumn = columns[order[0].column].data;
+    const sortOrder = order[0].dir;
+    const searchValue = search.value;
+
+    const users = await admin.findUsersWithPagination(limit, offset, sortColumn, sortOrder, columns, searchValue);
+    const count = await admin.userCount();
+    const filteredCount = await admin.userFilteredCount(columns, searchValue);
+
+    res.send({
+      statusCode: 200,
+      users: users,
+      draw: draw,
+      recordsTotal: count,
+      recordsFiltered: filteredCount
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('An error occurred while fetching users');
+  }
+};

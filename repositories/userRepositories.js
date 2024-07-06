@@ -177,6 +177,63 @@ module.exports = {
 
   count: async () => {
       return await prisma.course.count();
+  },
+  findUsersWithPagination: async (limit, offset, sortColumn, sortOrder, columns, searchValue) => {
+    let where = {};
+
+    if (searchValue) {
+      const searchConditions = columns
+        .filter(column => column.searchable && column.name)
+        .map(column => ({
+          [column.name]: {
+            contains: searchValue,
+            mode: 'insensitive'
+          }
+        }));
+
+      where = {
+        OR: searchConditions
+      };
+    }
+
+    return await prisma.user.findMany({
+      where: where,
+      orderBy: {
+        [sortColumn]: sortOrder
+      },
+      take: limit,
+      skip: offset,
+      include: {
+        courses: true // Include associated courses
+      }
+    });
+  },
+
+  userFilteredCount: async (columns, searchValue) => {
+    let where = {};
+
+    if (searchValue) {
+      const searchConditions = columns
+        .filter(column => column.searchable && column.name)
+        .map(column => ({
+          [column.name]: {
+            contains: searchValue,
+            mode: 'insensitive'
+          }
+        }));
+
+      where = {
+        OR: searchConditions
+      };
+    }
+
+    return await prisma.user.count({
+      where: where
+    });
+  },
+
+  userCount: async () => {
+    return await prisma.user.count();
   }
 }
 
