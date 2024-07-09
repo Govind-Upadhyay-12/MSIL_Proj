@@ -422,14 +422,12 @@ module.exports.All_Users_Courses = async (req, res) => {
 module.exports.Assigning_table = async (req, res) => {
   try {
     const { courseId, problems, components } = req.body;
-    console.log(req.body);
 
     if (!courseId || typeof problems !== 'number' || typeof components !== 'number') {
       return res.status(400).json({ error: 'Invalid request body. Ensure courseId, problems, and components are provided and are numbers.' });
     }
 
     const course = await prisma.course.findUnique({ where: { id: courseId } });
-    console.log(course);
     if (!course) {
       return res.status(404).json({ error: 'Course not found' });
     }
@@ -465,6 +463,7 @@ module.exports.Assigning_table = async (req, res) => {
   }
 };
 
+
 module.exports.MapComponent = async (req, res) => {
   const { courseId, mappings } = req.body;
 
@@ -481,23 +480,22 @@ module.exports.MapComponent = async (req, res) => {
       return res.status(404).json({ error: 'Course not found' });
     }
 
-    // Ensure the mappings use indices that are within the range of created problems and components
-    const numProblems = course.problems.length;
-    const numComponents = course.components.length;
+    const problemMap = new Map(course.problems.map((problem, index) => [problem.id, index]));
+    const componentMap = new Map(course.components.map((component, index) => [component.id, index]));
 
     const componentProblems = await Promise.all(
-      mappings.map(mapping => {
-        const problemIndex = mapping.problemId - 1;  
-        const componentIndex = mapping.componentId - 1;  
+      mappings.map(async mapping => {
+        const problemIndex = problemMap.get(mapping.problemId);
+        const componentIndex = componentMap.get(mapping.componentId);
 
-        if (problemIndex >= numProblems || componentIndex >= numComponents || problemIndex < 0 || componentIndex < 0) {
-          throw new Error(`Invalid mapping: problemId ${mapping.problemId} or componentId ${mapping.componentId} out of range`);
+        if (problemIndex === undefined || componentIndex === undefined) {
+          throw new Error(`Invalid mapping: problemId ${mapping.problemId} or componentId ${mapping.componentId} not found`);
         }
 
         const problemId = course.problems[problemIndex].id;
         const componentId = course.components[componentIndex].id;
 
-        return prisma.componentProblem.create({
+        const createdComponentProblem = await prisma.componentProblem.create({
           data: {
             problem: { connect: { id: problemId } },
             component: { connect: { id: componentId } },
@@ -507,19 +505,18 @@ module.exports.MapComponent = async (req, res) => {
             component: true,
           },
         });
+
+        return {
+          ProblemId: createdComponentProblem.problem.id,
+          ComponentId: createdComponentProblem.component.id,
+        };
       })
     );
 
-    const tableData = componentProblems.map(cp => ({
-      ProblemId: cp.problem.id,
-      ComponentId: cp.component.id,
-    }));
-
-    res.json({ tableData });
+    res.json({ tableData: componentProblems });
   } catch (error) {
-    console.error(error.message);
-    res.status(500).json({ error: error.message || 'An error occurred while mapping components to problems.' });
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while mapping components to problems.' });
   }
 };
-
 
