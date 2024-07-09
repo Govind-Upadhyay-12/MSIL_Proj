@@ -392,7 +392,7 @@ module.exports.deleteCourse = async (req, res) => {
 };
 
 module.exports.All_Users_Courses = async (req, res) => {
-  console.log(req.body);
+
   try {
     const { start, length, columns, order, search, draw } = req.body;
 
@@ -418,3 +418,108 @@ module.exports.All_Users_Courses = async (req, res) => {
     res.status(500).send('An error occurred while fetching users');
   }
 };
+
+module.exports.Assigning_table = async (req, res) => {
+  try {
+    const { courseId, problems, components } = req.body;
+    console.log(req.body);
+
+    if (!courseId || typeof problems !== 'number' || typeof components !== 'number') {
+      return res.status(400).json({ error: 'Invalid request body. Ensure courseId, problems, and components are provided and are numbers.' });
+    }
+
+    const course = await prisma.course.findUnique({ where: { id: courseId } });
+    console.log(course);
+    if (!course) {
+      return res.status(404).json({ error: 'Course not found' });
+    }
+
+    const createdProblems = await Promise.all(
+      Array.from({ length: problems }).map((_, index) =>
+        prisma.problem.create({
+          data: {
+            name: `Problem ${index + 1}`,
+            description: `Description for Problem ${index + 1}`,
+            course: { connect: { id: courseId } },
+          },
+        })
+      )
+    );
+
+    const createdComponents = await Promise.all(
+      Array.from({ length: components }).map((_, index) =>
+        prisma.component.create({
+          data: {
+            name: `Component ${index + 1}`,
+            description: `Description for Component ${index + 1}`,
+            course: { connect: { id: courseId } },
+          },
+        })
+      )
+    );
+
+    res.json({ problems: createdProblems, components: createdComponents });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'An error occurred while initializing the table.' });
+  }
+};
+
+module.exports.MapComponent = async (req, res) => {
+  const { courseId, mappings } = req.body;
+
+  try {
+    const course = await prisma.course.findUnique({
+      where: { id: courseId },
+      include: {
+        problems: true,
+        components: true,
+      },
+    });
+
+    if (!course) {
+      return res.status(404).json({ error: 'Course not found' });
+    }
+
+    // Ensure the mappings use indices that are within the range of created problems and components
+    const numProblems = course.problems.length;
+    const numComponents = course.components.length;
+
+    const componentProblems = await Promise.all(
+      mappings.map(mapping => {
+        const problemIndex = mapping.problemId - 1;  
+        const componentIndex = mapping.componentId - 1;  
+
+        if (problemIndex >= numProblems || componentIndex >= numComponents || problemIndex < 0 || componentIndex < 0) {
+          throw new Error(`Invalid mapping: problemId ${mapping.problemId} or componentId ${mapping.componentId} out of range`);
+        }
+
+        const problemId = course.problems[problemIndex].id;
+        const componentId = course.components[componentIndex].id;
+
+        return prisma.componentProblem.create({
+          data: {
+            problem: { connect: { id: problemId } },
+            component: { connect: { id: componentId } },
+          },
+          include: {
+            problem: true,
+            component: true,
+          },
+        });
+      })
+    );
+
+    const tableData = componentProblems.map(cp => ({
+      ProblemId: cp.problem.id,
+      ComponentId: cp.component.id,
+    }));
+
+    res.json({ tableData });
+  } catch (error) {
+    console.error(error.message);
+    res.status(500).json({ error: error.message || 'An error occurred while mapping components to problems.' });
+  }
+};
+
+

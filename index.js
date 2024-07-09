@@ -80,27 +80,30 @@ app.post('/map-components-problems', async (req, res) => {
       return res.status(404).json({ error: 'Course not found' });
     }
 
-    const problemNameToId = Object.fromEntries(course.problems.map(problem => [problem.name, problem.id]));
-    const componentNameToId = Object.fromEntries(course.components.map(component => [component.name, component.id]));
+    const validProblemIds = new Set(course.problems.map(problem => problem.id));
+    const validComponentIds = new Set(course.components.map(component => component.id));
 
     const componentProblems = await Promise.all(
-      mappings.map(mapping =>
-        prisma.componentProblem.create({
+      mappings.map(mapping => {
+        if (!validProblemIds.has(mapping.problemId) || !validComponentIds.has(mapping.componentId)) {
+          throw new Error(`Invalid mapping: problemId ${mapping.problemId} or componentId ${mapping.componentId} not found`);
+        }
+        return prisma.componentProblem.create({
           data: {
-            problem: { connect: { id: problemNameToId[mapping.problemName] } },
-            component: { connect: { id: componentNameToId[mapping.componentName] } },
+            problem: { connect: { id: mapping.problemId } },
+            component: { connect: { id: mapping.componentId } },
           },
           include: {
             problem: true,
             component: true,
           },
-        })
-      )
+        });
+      })
     );
 
     const tableData = componentProblems.map(cp => ({
-      ProblemName: cp.problem.name,
-      ComponentName: cp.component.name,
+      ProblemId: cp.problem.id,
+      ComponentId: cp.component.id,
     }));
 
     res.json({ tableData });

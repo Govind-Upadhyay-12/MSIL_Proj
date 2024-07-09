@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const {addCourse, assignCourse,Addadds,GettingAdds,findCourseByCategory,Admin_login,All_Courses,GetCategory,fileUploadGet, initialize_table, map_component, AddCourse_csv, deleteCourse, All_Users_Courses} = require("../controllers/admin.controller.js");
+const {addCourse, assignCourse,Addadds,GettingAdds,findCourseByCategory,Admin_login,All_Courses,GetCategory,fileUploadGet, initialize_table, map_component, AddCourse_csv, deleteCourse, All_Users_Courses,Assigning_table, MapComponent} = require("../controllers/admin.controller.js");
 const { upload } = require("../helper/helper.js");
 const auth=require("../middleware/auth_token.js")
 router.get("/addCourse", (req, res) => {
@@ -14,11 +14,11 @@ router.get('/modules_by_category',auth,findCourseByCategory)
 router.post('/getCourses',auth,All_Courses)
 router.get('/getAllCategoryList',auth,GetCategory)
 router.get('/uploads/:fileName',fileUploadGet)
-router.post('/initialize-table',initialize_table)
-router.post('/map-component',map_component)
 router.post("/addCourse_csv", upload.single("file"), AddCourse_csv);
 router.delete("/deleteCourse",deleteCourse)
 router.post('/assigningcourse',All_Users_Courses)
+router.post('/initialize-table',Assigning_table);
+router.post('/map_component',MapComponent)
 
 
 module.exports = router;
