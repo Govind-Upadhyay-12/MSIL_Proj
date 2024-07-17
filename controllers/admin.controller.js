@@ -195,7 +195,7 @@ module.exports.All_Courses = async (req, res) => {
       });
   } catch (error) {
       console.error(error);
-      responseManagement.sendResponse(res, httpStatus.INTERNAL_SERVER_ERROR, global.internal_server_error);
+      return res.status(500).json({statusCode:500,message:error})
   }
 };
 
@@ -519,4 +519,11 @@ module.exports.MapComponent = async (req, res) => {
     res.status(500).json({ error: 'An error occurred while mapping components to problems.' });
   }
 };
-
+module.exports.LogOut = async (req, res) => {
+  try {
+    return res.status(200).json({ statusCode:200,message: 'Logged out successfully. Please remove the token from local storage.' });
+  } catch (error) {
+    console.error(error);
+   return res.status(500).json({statusCode:500,error: 'An error occurred while logging out.' });
+  }
+};

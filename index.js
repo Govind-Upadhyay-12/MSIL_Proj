@@ -9,22 +9,17 @@ const path = require('path');
 const app = express();
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-
-
 dotenv.config(); 
 connectPostgresql();
-
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(logger("dev"));
-
 app.get('/', (req, res) => {
   res.send("server is running on AWS");
 });
-
 app.post('/initialize-table', async (req, res) => {
   const { courseId, problems, components } = req.body;
 
@@ -112,15 +107,12 @@ app.post('/map-components-problems', async (req, res) => {
     res.status(500).json({ error: 'An error occurred while mapping components to problems.' });
   }
 });
-
-
 app.use("/admin", express.static(path.join(__dirname, "./admin/dist/admin")));
 app.get(/\/admin\/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, "./admin/dist/admin/index.html"));
 });
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(require("./routes/index.js"));
-
 app.listen(8080, () => {
   console.log(`Server is running on port ${8080}`);
 });

@@ -1,89 +1,3 @@
-// generator client {
-//   provider = "prisma-client-js"
-// }
-
-// datasource db {
-//   provider = "postgresql"
-//   url      = env("DATABASE_URL")
-// }
-
-// model User {
-//   id                      Int       @id @default(autoincrement())
-//   courses                 Course[]
-//   REGION                  String
-//   PARENT_GROUP_NAME       String    @map("PARENT GROUP NAME")
-//   DEALER_CODE             String    @map("DEALER CODE")
-//   DEALER_NAME             String    @map("DEALER NAME")
-//   DEALER_STATE            String    @map("DEALER STATE")
-//   DEALER_CITY             String    @map("DEALER CITY")
-//   EMPLOYEE_FIRSTNAME      String    @map("EMPLOYEE FIRSTNAME")
-//   EMPLOYEE_LASTNAME       String    @map("EMPLOYEE LASTNAME")
-//   DESIGNATION             String
-//   DESIGNATION_DESCRIPTION String    @map("DESIGNATION DESCRIPTION")
-//   MSPIN_NO                Int       @map("MSPIN NO")
-//   GENDER                  String
-//   EMPLOYEE_DOJ            String    @map("EMPLOYEE DOJ")
-//   EMPLOYEE_DOL            String    @map("EMPLOYEE DOL")
-//   EMPLOYEE_MOBILE_NO      String    @map("EMPLOYEE MOBILE NO")
-//   EMPLOYEE_TYPE           String    @map("EMPLOYEE TYPE")
-//   created_at              DateTime  @default(now())
-//   updated_at              DateTime  @updatedAt
-// }
-
-// model Admin {
-//   id       Int    @id @default(autoincrement())
-//   email    String @unique
-//   password String
-// }
-
-// model Course {
-//   id          Int          @id @default(autoincrement())
-//   category    String
-//   module_name String
-//   videoLink   String?
-//   content     String
-//   duration    String
-//   user        User?        @relation(fields: [user_id], references: [id], onDelete: Cascade)
-//   user_id     Int?
-//   problems    Problem[]
-//   components  Component[]
-//   created_at  DateTime     @default(now())
-//   updated_at  DateTime     @default(now())
-// }
-
-// model Problem {
-//   id                Int                @id @default(autoincrement())
-//   name              String
-//   description       String?
-//   course            Course?            @relation(fields: [course_id], references: [id], onDelete: Cascade)
-//   course_id         Int?
-//   componentProblems ComponentProblem[]
-// }
-
-// model Component {
-//   id                Int                @id @default(autoincrement())
-//   name              String
-//   description       String?
-//   course            Course?            @relation(fields: [course_id], references: [id], onDelete: Cascade)
-//   course_id         Int?
-//   componentProblems ComponentProblem[]
-// }
-
-// model ComponentProblem {
-//   id          Int        @id @default(autoincrement())
-//   problem     Problem    @relation(fields: [problem_id], references: [id], onDelete: Cascade)
-//   problem_id  Int
-//   component   Component  @relation(fields: [component_id], references: [id], onDelete: Cascade)
-//   component_id Int
-//   created_at  DateTime   @default(now())
-//   updated_at  DateTime   @default(now())
-// }
-
-// model Adds {
-//   id          Int        @id @default(autoincrement())
-//   image       String
-// }
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -96,26 +10,25 @@ datasource db {
 model User {
   id                      Int       @id @default(autoincrement())
   courses                 Course[]
-  region                  String
-  parentGroupName         String    @map("PARENT GROUP NAME")
-  dealerCode              String    @map("DEALER CODE")
-  dealerName              String    @map("DEALER NAME")
-  dealerState             String    @map("DEALER STATE")
-  dealerCity              String    @map("DEALER CITY")
-  employeeFirstName       String    @map("EMPLOYEE FIRSTNAME")
-  employeeLastName        String    @map("EMPLOYEE LASTNAME")
-  designation             String
-  designationDescription  String    @map("DESIGNATION DESCRIPTION")
-  mspinNo                 Int       @map("MSPIN NO")
-  gender                  String
-  employeeDoj             String    @map("EMPLOYEE DOJ")
-  employeeDol             String    @map("EMPLOYEE DOL")
-  employeeMobileNo        String    @map("EMPLOYEE MOBILE NO")
-  employeeType            String    @map("EMPLOYEE TYPE")
-  createdAt               DateTime  @default(now()) @map("created_at")
-  updatedAt               DateTime  @updatedAt @map("updated_at")
+  REGION                  String
+  PARENT_GROUP_NAME       String    @map("PARENT GROUP NAME")
+  DEALER_CODE             String    @map("DEALER CODE")
+  DEALER_NAME             String    @map("DEALER NAME")
+  DEALER_STATE            String    @map("DEALER STATE")
+  DEALER_CITY             String    @map("DEALER CITY")
+  EMPLOYEE_FIRSTNAME      String    @map("EMPLOYEE FIRSTNAME")
+  EMPLOYEE_LASTNAME       String    @map("EMPLOYEE LASTNAME")
+  DESIGNATION             String
+  DESIGNATION_DESCRIPTION String    @map("DESIGNATION DESCRIPTION")
+  MSPIN_NO                Int       @map("MSPIN NO")
+  GENDER                  String
+  EMPLOYEE_DOJ            String    @map("EMPLOYEE DOJ")
+  EMPLOYEE_DOL            String    @map("EMPLOYEE DOL")
+  EMPLOYEE_MOBILE_NO      String    @map("EMPLOYEE MOBILE NO")
+  EMPLOYEE_TYPE           String    @map("EMPLOYEE TYPE")
+  created_at              DateTime  @default(now())
+  updated_at              DateTime  @updatedAt
 }
-
 model Admin {
   id       Int    @id @default(autoincrement())
   email    String @unique
@@ -125,7 +38,7 @@ model Admin {
 model Course {
   id          Int          @id @default(autoincrement())
   category    String
-  moduleName  String       @map("module_name")
+  module_name String
   videoLink   String?
   content     String
   duration    String
@@ -133,8 +46,8 @@ model Course {
   userId      Int?         @map("user_id")
   problems    Problem[]
   components  Component[]
-  createdAt   DateTime     @default(now()) @map("created_at")
-  updatedAt   DateTime     @default(now()) @map("updated_at")
+  createdAt   DateTime     @default(now()) 
+  updatedAt   DateTime     @default(now()) 
 }
 
 model Problem {

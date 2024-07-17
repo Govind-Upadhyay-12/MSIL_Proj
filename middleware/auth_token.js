@@ -1,4 +1,3 @@
-
 const jwt = require("jsonwebtoken");
 const { prisma } = require("../DB/db.config");
 module.exports = async (req, res, next) => {
@@ -8,13 +7,11 @@ module.exports = async (req, res, next) => {
         if (!token) {
             return res.status(401).json({ msg: "Unauthorized - No token provided" });
         }
-
-        const decoded = jwt.verify(token, process.env.SECRET);
+       const decoded = jwt.verify(token, process.env.SECRET);
         
         if (!decoded) {
             return res.status(401).json({ msg: "Invalid token" });
         }
-
         const user = await prisma.user.findFirst({ where: { id: decoded.userId } });
         const admin = await prisma.admin.findFirst({ where: { id: decoded.userId } });
         const entity = user || admin;
@@ -22,7 +19,6 @@ module.exports = async (req, res, next) => {
         if (!entity) {
             return res.status(404).json({ msg: "User not found" });
         }
-
         const { password, ...entityWithoutPassword } = entity;
         req.user = entityWithoutPassword;
         next();
